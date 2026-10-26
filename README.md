@@ -63,3 +63,28 @@ ibus engine hangul -->
   git submodule update --init --remote --recursive DeepTech-Robot-Navigation/
 ```
 
+
+
+- To **create** custom package, in `colcon_ws/**src**`,
+```bash
+ros2 pkg create <pkg_name> --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+```
+
+- To **build** custom python package, in `colcon_ws/`,
+```bash
+colcon build
+source install/setup.bash
+```
+
+- To **run** package, in `colcon_ws/`,
+```bash
+# ros2 run <package_name> <executable_name:defined in colcon_ws/src/A_pubsub/setup.py>
+# execute in each terminal
+
+# ros2 run A_pubsub talker
+# ros2 run A_pubsub listener
+
+ros2 run A_pubsub publisher
+ros2 run A_pubsub processor
+ros2 run A_pubsub subscriber
+```

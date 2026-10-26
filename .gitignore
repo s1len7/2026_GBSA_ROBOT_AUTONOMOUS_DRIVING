@@ -18,4 +18,4 @@ venv/
 .DS_Store
 Thumbs.db
 
-robot_navigation/colon_ws/src/A_pubsub
+# robot_navigation/colon_ws/src/A_pubsub
