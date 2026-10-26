@@ -25,13 +25,8 @@ setup(
     entry_points={
         'console_scripts': [
             # identifier = package_name.module_name:function_name
-
-            # "talker = A_pubsub.talker:main",
-            # "listener = A_pubsub.listener:main",
-
-            "publisher = A_pubsub.publisher:main",
-            "processor = A_pubsub.processor:main",
-            "subscriber = A_pubsub.subscriber:main",
+            "talker = A_pubsub.talker:main",
+            "listener = A_pubsub.listener:main",
         ],
     },
 )

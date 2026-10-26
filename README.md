@@ -69,6 +69,8 @@ ibus engine hangul -->
 ```bash
 ros2 pkg create <pkg_name> --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
 ```
+ros2 pkg create tutorial_robot_control --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+
 
 - To **build** custom python package, in `colcon_ws/`,
 ```bash
@@ -88,3 +90,10 @@ ros2 run A_pubsub publisher
 ros2 run A_pubsub processor
 ros2 run A_pubsub subscriber
 ```
+
+- To visualize modules relationship:
+```bash
+rqt_graph
+```
+
+
