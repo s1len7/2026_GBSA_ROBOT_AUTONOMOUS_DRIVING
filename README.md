@@ -44,7 +44,7 @@
 <!-- i will memo anything about the lecture. you will trim, rewrite and post above in korean. -->
 
 - Env: Ubuntu 24.04 LTS
-- ID: edu14, PW:1234
+<!-- - ID: edu14, PW:1234 -->
 
 <!-- sudo apt install ibus-hangul
 ibus engine hangul -->
