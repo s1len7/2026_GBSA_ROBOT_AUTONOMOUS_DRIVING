@@ -51,8 +51,15 @@ ibus engine hangul -->
 
 
 - installed vscode
-  - setup python, cmake tools, jupyter
+  - setup **python, cmake tools, jupyter** extension
 
 - in Terminal,
   - Copy: Ctrl + **shift** + C
   - paste: Ctrl + **shift** + V
+
+- To update the lecturer's repository(submodule):
+
+```bash
+  git submodule update --init --remote --recursive DeepTech-Robot-Navigation/
+```
+
