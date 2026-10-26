@@ -38,3 +38,21 @@
 | 10. 28.(수) | 2-2 | 센서 데이터 융합 및 실시간 SLAM |
 | 10. 29.(목) | 2-2 | Navigation2 스택 아키텍처 및 경로 계획 |
 | 10. 30.(금) | 2-2 | 위치 추정 최적화 및 통합 자율주행 |
+
+## Memo
+
+<!-- i will memo anything about the lecture. you will trim, rewrite and post above in korean. -->
+
+- Env: Ubuntu 24.04 LTS
+- ID: edu14, PW:1234
+
+<!-- sudo apt install ibus-hangul
+ibus engine hangul -->
+
+
+- installed vscode
+  - setup python, cmake tools, jupyter
+
+- in Terminal,
+  - Copy: Ctrl + **shift** + C
+  - paste: Ctrl + **shift** + V
