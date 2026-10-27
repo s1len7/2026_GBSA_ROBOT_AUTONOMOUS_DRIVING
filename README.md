@@ -51,8 +51,10 @@
 - Env: Ubuntu 24.04 LTS
 <!-- - ID: edu14, PW:1234 -->
 
-<!-- sudo apt install ibus-hangul
-ibus engine hangul -->
+<!-- 
+sudo apt install ibus-hangul
+ibus engine hangul 
+-->
 
 
 - installed vscode
@@ -116,7 +118,7 @@ rqt_graph
 ```
 
 
-- launch file: .../colcon_ws/src/<pkg_name>/launch/<pkg_name>.launch.py
+- launch file: `.../colcon_ws/src/<pkg_name>/launch/<pkg_name>.launch.py`
   - for example, [src/A_pubsub/launch/A_pubsub.launch.py](robot_navigation/colcon_ws/src/A_pubsub/launch/A_pubsub.launch.py)
 
 - also, to use `launch.py`, it is required to modify **`setup.py`** 
@@ -156,4 +158,35 @@ BTW, We also need to know how to use our ESP32 board.
 - in [TinkerCAD](https://www.tinkercad.com/), we can simulate our custom circuit.
 
 
+- To install Arduino IDE,
+
+```bash
+sudo apt update
+sudo apt install -y curl libfuse2t64
+
+sudo mkdir -p /opt/arduino-ide
+cd /opt/arduino-ide
+
+sudo curl -fL \
+    https://github.com/arduino/arduino-ide/releases/latest/download/arduino-ide_2.3.10_Linux_64bit.AppImage \
+    -o arduino-ide.AppImage
+
+cd /opt/arduino-ide
+sudo chmod +x arduino-ide.AppImage
+./arduino-ide.AppImage --no-sandbox
+
+# To create shortcut,
+echo '#!/bin/sh
+exec /opt/arduino-ide/arduino-ide.AppImage --no-sandbox "$@"' > ./robot_navigation/scripts/arduino-ide
+chmod +x ./robot_navigation/scripts/arduino-ide
+
+# and create symbolic link
+sudo ln -s $HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/arduino-ide /usr/local/bin/arduino-ide
+```
+
+- To use our development board, In Arduino IDE, 
+  - install **BOARD MANAGER > esp32**
+  - and Select **WEMOS D1 R32**
+
+- To use the servo motor, install **LIBRARY MANAGER > ESP32Servo**
 
