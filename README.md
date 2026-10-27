@@ -72,7 +72,7 @@ ros2 pkg create <pkg_name> --build-type ament_python --dependencies rclpy std_ms
 
   - for example,
 ```bash
-.../colon_ws/src$ ros2 pkg create tutorial_robot_control --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+.../colcon_ws/src$ ros2 pkg create tutorial_robot_control --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
 ```
 
 
