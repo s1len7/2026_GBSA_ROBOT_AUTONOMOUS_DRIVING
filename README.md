@@ -26,6 +26,7 @@
 | 2-2 | **ROS2 기반 SLAM 및 자율주행(Navigation2) 실전** | 2026. 10. 28.(수) ~ 10. 30.(금) | 10:00 ~ 17:00 | 3일 · 18시간 |
 
 - **강사**: 김규래 ([github.com/kyu-rae-kim](https://github.com/kyu-rae-kim), [kkr.kyurae.kim@gmail.com](mailto:kkr.kyurae.kim@gmail.com))
+<!-- kkr0913 -->
 - **교육 장소**: 경기스타트업벨리(E동) 4층 도약실 (경기도 성남시 수정구 금토로 52)
 
 
@@ -43,6 +44,10 @@
 
 <!-- i will memo anything about the lecture. you will trim, rewrite and post above in korean. -->
 
+- Reference
+  - https://docs.ros.org/en/jazzy/
+
+
 - Env: Ubuntu 24.04 LTS
 <!-- - ID: edu14, PW:1234 -->
 
@@ -53,14 +58,24 @@ ibus engine hangul -->
 - installed vscode
   - setup **python, cmake tools, jupyter** extension
 
+
 - in Terminal,
   - Copy: Ctrl + **shift** + C
   - paste: Ctrl + **shift** + V
+
 
 - To update the lecturer's repository(submodule):
 
 ```bash
 git submodule update --init --remote --recursive DeepTech-Robot-Navigation/
+```
+
+
+- To run `turtlesim`,
+```bash
+# execute in each terminal
+ros2 run turtlesim turtlesim_node
+ros2 run turtlesim turtle_teleop_key
 ```
 
 
@@ -101,5 +116,44 @@ rqt_graph
 ```
 
 
-- Reference
-  - https://docs.ros.org/en/jazzy/
+- launch file: .../colcon_ws/src/<pkg_name>/launch/<pkg_name>.launch.py
+  - for example, [src/A_pubsub/launch/A_pubsub.launch.py](robot_navigation/colcon_ws/src/A_pubsub/launch/A_pubsub.launch.py)
+
+- also, to use `launch.py`, it is required to modify **`setup.py`** 
+  - for example, [src/A_pubsub/setup.py](robot_navigation/colcon_ws/src/A_pubsub/setup.py)
+```python
+      ...
+    data_files=[
+      ...
+        # To use <pkg_name>.launch.py
+        ('share/' + package_name + '/launch',
+            ['launch/A_pubsub.launch.py']),
+      ...
+```
+
+
+
+- then re-build the package and **launch**,
+
+```bash
+colcon build
+source install/setup.bash
+ros launch <pkg_name> <pkg_name.launch.py>
+```
+
+for example,
+
+```bash
+.../colcon_ws$ ros launch A_pubsub A_pubsub.launch.py
+```
+
+
+BTW, We also need to know how to use our ESP32 board.
+
+- ESP32R Pin Map: https://makerselectronics.com/product/wemos-d1-r32-esp32-wifi-bluetooth-uno-r3-pinout/?srsltid=AYCX9vKp3jPbDMPrFh7Z9ri447VV0HaBWqJo06a4ydxUy9PhmqqONIwJ
+
+
+- in [TinkerCAD](https://www.tinkercad.com/), we can simulate our custom circuit.
+
+
+
