@@ -60,7 +60,7 @@ ibus engine hangul -->
 - To update the lecturer's repository(submodule):
 
 ```bash
-  git submodule update --init --remote --recursive DeepTech-Robot-Navigation/
+git submodule update --init --remote --recursive DeepTech-Robot-Navigation/
 ```
 
 
