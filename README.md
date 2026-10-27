@@ -69,7 +69,11 @@ ibus engine hangul -->
 ```bash
 ros2 pkg create <pkg_name> --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
 ```
-ros2 pkg create tutorial_robot_control --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+
+  - for example,
+```bash
+.../colon_ws/src$ ros2 pkg create tutorial_robot_control --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+```
 
 
 - To **build** custom python package, in `colcon_ws/`,
@@ -80,15 +84,15 @@ source install/setup.bash
 
 - To **run** package, in `colcon_ws/`,
 ```bash
-# ros2 run <package_name> <executable_name:defined in colcon_ws/src/A_pubsub/setup.py>
 # execute in each terminal
+ros2 run <pkg_name> <executable_name:defined in colcon_ws/src/<pkg_name>/setup.py>
+```
 
-# ros2 run A_pubsub talker
-# ros2 run A_pubsub listener
-
-ros2 run A_pubsub publisher
-ros2 run A_pubsub processor
-ros2 run A_pubsub subscriber
+  - for example,
+```bash
+# execute in each terminal
+ros2 run A_pubsub talker
+ros2 run A_pubsub listener
 ```
 
 - To visualize modules relationship:
