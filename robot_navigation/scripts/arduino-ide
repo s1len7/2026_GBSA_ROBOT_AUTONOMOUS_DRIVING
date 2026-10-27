@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /opt/arduino-ide/arduino-ide.AppImage --no-sandbox "$@"
