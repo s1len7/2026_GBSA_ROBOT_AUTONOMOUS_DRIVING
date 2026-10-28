@@ -402,4 +402,14 @@ ros2 run micro_ros_agent micro_ros_agent \
     -v6
 ```
 
+- in firmware/esp32
+
+```bash
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/
+
+cp main/main.cpp main/main.cpp.uart.backup
+cp main/CMakeLists.txt main/CMakeLists.txt.uart.backup
+mv app-colcon.meta app-colcon.meta.backup
+```
+
 
