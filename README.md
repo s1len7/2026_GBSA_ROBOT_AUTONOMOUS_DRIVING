@@ -402,7 +402,7 @@ ros2 run micro_ros_agent micro_ros_agent \
     -v6
 ```
 
-- in firmware/esp32
+- To backup uart example, in `robot_navigation/firmware/esp32`
 
 ```bash
 cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/
@@ -411,5 +411,153 @@ cp main/main.cpp main/main.cpp.uart.backup
 cp main/CMakeLists.txt main/CMakeLists.txt.uart.backup
 mv app-colcon.meta app-colcon.meta.backup
 ```
+
+
+- To use wifi example
+
+```bash
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/
+idfsh
+idf.py clean-microros
+idf.py reconfigure
+
+idf.py menuconfig
+```
+
+- micro-ROS Settings -> micro-ROS network interface select -> WLAN interface 
+  - WiFi Configuration -> WiFi SSID -> WiFi Password
+  - micro-ROS Agent IP 
+  - S로 저장 -> Esc
+
+  - expected result:
+```bash
+(venv) grep CONFIG_MICRO_ROS_ESP_NETIF_WLAN sdkconfig
+CONFIG_MICRO_ROS_ESP_NETIF_WLAN=y
+(venv) grep CONFIG_MICRO_ROS_AGENT sdkconfig
+CONFIG_MICRO_ROS_AGENT_IP="192.168.62.243"
+CONFIG_MICRO_ROS_AGENT_PORT="8888"
+(venv) grep CONFIG_ESP_WIFI_SSID sdkconfig
+CONFIG_ESP_WIFI_SSID="StartupBridge_4F"
+(venv) 
+```
+
+- To build, flash and monitor
+```bash
+idf.py build
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+- To check if ubuntu firewall is enabled,
+
+```bash
+sudo ufw status
+
+>> Status: inactive
+이 경우 다음 단계 스킵
+>> Status: active
+이 경우 다음 단계 진행
+
+sudo ufw allow 8888/udp
+sudo ufw status
+>> Status: inactive
+```
+
+- To execute micro-ROS Agent,
+
+```bash
+ros2 run micro_ros_agent micro_ros_agent \
+    udp4 \
+    --port 8888 \
+    -v6
+```
+
+- To test ROS2 topic communication,
+
+```bash
+ros2 topic pub -r 2 /esp32/cmd std_msgs/msg/Int32 "{data: 123456789}"
+```
+
+
+- 키보드 Teleop 모터 제어
+
+```bash
+sudo apt update
+sudo apt install ros-jazzy-teleop-twist-keyboard
+ros2 pkg executables teleop_twist_keyboard
+```
+
+
+- To create new firmware,
+
+```bash
+idfsh
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
+mkdir <fw_name>
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<fw_name>/
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<fw_name>
+idf.py set-target esp32
+idf.py build
+
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+- for example, hello_world,
+```bash
+idfsh
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
+mkdir hello_world
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/hello_world/
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/hello_world
+idf.py set-target esp32
+idf.py build
+
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+
+- for example, uart_example,
+```bash
+idfsh
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
+mkdir uart_example
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/uart_example/
+
+echo "implement uart_example/main/main.cpp, uart_example/main/CMakeLists.txt"
+read -r -p "Press any key to continue..."
+
+echo "TODO: idf.py menuconfig"
+read -r -p "Press any key to continue..."
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/uart_example
+idf.py set-target esp32
+idf.py build
+
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+
+- for example, wifi_example,
+```bash
+idfsh
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
+mkdir wifi_example
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/wifi_example/
+
+echo "TODO: implement wifi_example/main/main.cpp, wifi_example/main/CMakeLists.txt"
+read -r -p "Press any key to continue..."
+
+echo "TODO: idf.py menuconfig"
+read -r -p "Press any key to continue..."
+
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/wifi_example
+idf.py set-target esp32
+idf.py build
+
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
 
 

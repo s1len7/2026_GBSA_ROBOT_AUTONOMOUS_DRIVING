@@ -1,9 +1,13 @@
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "driver/uart.h"
+#include "esp_err.h"
+#include "esp_log.h"
+
+#include <uros_network_interfaces.h>
 
 #include <rcl/rcl.h>
 #include <rclc/rclc.h>
@@ -11,17 +15,20 @@
 
 #include <std_msgs/msg/int32.h>
 
-#include <rmw_microxrcedds_c/config.h>
 #include <rmw_microros/rmw_microros.h>
-
-#include "esp32_serial_transport.h"
 
 
 namespace
 {
 
 rcl_publisher_t publisher;
-std_msgs__msg__Int32 message;
+rcl_subscription_t command_subscriber;
+
+std_msgs__msg__Int32 publish_message;
+std_msgs__msg__Int32 command_message;
+
+constexpr char TAG[] = "micro_ros";
+constexpr size_t ROS_DOMAIN_ID = 15;
 
 
 /**
@@ -86,12 +93,37 @@ void timer_callback(
 
     RCSOFTCHECK(
         rcl_publish(
-            &publisher,   // message를 전송할 publisher
-            &message,     // 전송할 ROS message
-            nullptr)      // 별도의 RMW publisher allocation 정보 사용하지 않음
+            &publisher,        // message를 전송할 publisher
+            &publish_message,  // 전송할 ROS message
+            nullptr)           // 별도의 RMW publisher allocation 정보 사용하지 않음
         );
 
-    ++message.data;
+    ++publish_message.data;
+}
+
+
+/**
+ * @brief subscription으로 수신한 Int32 메시지를 처리하는 callback 함수.
+ *
+ * executor가 subscription에서 새 메시지를 수신하면 이 함수를 호출한다.
+ * 전달받은 generic pointer를 std_msgs/msg/Int32 메시지 타입의 포인터로
+ * 변환한 뒤, 수신한 data 값을 로그로 출력한다.
+ *
+ * @param msg_in 수신한 ROS 메시지를 가리키는 포인터.
+ */
+void command_callback(const void *msg_in)
+{
+    if (msg_in == nullptr) {
+        return;
+    }
+
+    const auto *received_message =
+        static_cast<const std_msgs__msg__Int32 *>(msg_in);
+
+    ESP_LOGI(
+        TAG,                              // 로그 메시지에 표시할 tag
+        "Received /esp32/cmd: %" PRId32,  // int32_t 값을 10진수로 출력
+        received_message->data);          // 실제로 출력할 std_msgs.msg.Int32 값
 }
 
 
@@ -124,15 +156,26 @@ void micro_ros_task(void *argument)
             &init_options,
             allocator));
 
-    // 이 micro-ROS node가 사용할 ROS Domain ID
-    // constexpr size_t ros_domain_id = 본인_도메인_숫자;
-    constexpr size_t ros_domain_id = 0;
-
     // init_options에 Domain ID 설정 추가
     RCCHECK(
         rcl_init_options_set_domain_id(
             &init_options,
-            ros_domain_id));
+            ROS_DOMAIN_ID));
+
+#ifdef CONFIG_MICRO_ROS_ESP_XRCE_DDS_MIDDLEWARE
+
+    // micro-ROS RMW 초기화 옵션
+    rmw_init_options_t *rmw_options =
+        rcl_init_options_get_rmw_init_options(&init_options);
+
+    // UDP로 접속할 micro-ROS Agent 주소 설정
+    RCCHECK(
+        rmw_uros_options_set_udp_address(
+            CONFIG_MICRO_ROS_AGENT_IP,
+            CONFIG_MICRO_ROS_AGENT_PORT,
+            rmw_options));
+
+#endif
 
     // support 초기화 및 공통 실행 환경 준비
     RCCHECK(
@@ -154,17 +197,27 @@ void micro_ros_task(void *argument)
             "",                     // 노드 namespace
             &support));
 
-
-    // std_msgs.msg.Int32 메세지 타입의 publisher 생성
-    rclc_publisher_init_default(
-        &publisher,
-        &node,
-        ROSIDL_GET_MSG_TYPE_SUPPORT(
-            std_msgs,
-            msg,
-            Int32),
-        "esp32_int32");   // publish할 topic 이름
-
+    // Publisher 생성 (std_msgs.msg.Int32 메세지 타입)
+    RCCHECK(
+        rclc_publisher_init_default(
+            &publisher,
+            &node,
+            ROSIDL_GET_MSG_TYPE_SUPPORT(
+                std_msgs,
+                msg,
+                Int32),
+            "esp32_int32"));   // publish할 topic 이름
+    
+    // Subscriber 생성
+    RCCHECK(
+        rclc_subscription_init_default(
+            &command_subscriber,
+            &node,
+            ROSIDL_GET_MSG_TYPE_SUPPORT(
+                std_msgs,
+                msg,
+                Int32),
+            "esp32/cmd"));   // subscribe할 topic 이름
 
     // ROS timer 객체
     rcl_timer_t timer;
@@ -180,7 +233,6 @@ void micro_ros_task(void *argument)
             RCL_MS_TO_NS(timer_period_ms),
             timer_callback));
 
-
     // callback을 실행할 executor 객체
     rclc_executor_t executor;
 
@@ -189,17 +241,34 @@ void micro_ros_task(void *argument)
         rclc_executor_init(
             &executor,
             &support.context,  // executor가 사용할 ROS context
-            1,                 // executor가 관리할 handle 개수: timer 1개
+            2,                 // executor가 관리할 handle 개수: 2개 (timer, subscriber)
             &allocator));
 
-    // 위에서 생성한 timer를 executor에 등록
+    // timer를 executor에 등록
     RCCHECK(
         rclc_executor_add_timer(
             &executor,
             &timer));
+    
+    // subscriber를 executor에 등록
+    RCCHECK(
+        rclc_executor_add_subscription(
+            &executor,
+            &command_subscriber,
+            &command_message,
+            command_callback,
+            ON_NEW_DATA));      // 새로운 메시지가 있을 때만 callback 실행
 
-    // 처음 publish할 Int32 message 값
-    message.data = 0;
+
+    // 초기 값 정의
+    publish_message.data = 0;
+    command_message.data = 0;
+
+
+    // 로그 출력
+    ESP_LOGI(TAG, "micro-ROS Node Initialized");
+    ESP_LOGI(TAG, "Publishing: /esp32_int32");
+    ESP_LOGI(TAG, "Subscribing: /esp32/cmd");
 
 
     // 등록된 ROS entity(timer 등)의 상태를 확인하고 실행 가능한 callback이 있으면 처리
@@ -212,30 +281,14 @@ void micro_ros_task(void *argument)
     }
 }
 
-
-// micro-ROS serial transport에서 사용할 ESP32 UART 포트 번호
-size_t uart_port = UART_NUM_0;
-
 } // namespace
 
 
 extern "C" void app_main(void)
 {
-#if defined(RMW_UXRCE_TRANSPORT_CUSTOM)
-
-    rmw_uros_set_custom_transport(
-        true,
-        static_cast<void *>(&uart_port),
-        esp32_serial_open,
-        esp32_serial_close,
-        esp32_serial_write,
-        esp32_serial_read);
-
-#else
-
-#error "micro-ROS custom transport is not enabled"
-
-#endif
+    // Wi-Fi 네트워크 인터페이스를 초기화하고 연결
+    ESP_ERROR_CHECK(
+        uros_network_interface_initialize());
 
     // micro-ROS 로직을 FreeRTOS task로 등록
     xTaskCreate(
