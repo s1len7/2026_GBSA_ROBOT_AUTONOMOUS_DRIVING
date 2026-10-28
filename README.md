@@ -262,4 +262,60 @@ echo "flash와 monitor 동시에 하려면"
 idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
+- To terminate it,
+  - press `Ctrl + ]`
+
+- To install micro-ROS dependency,
+  - in the virtual environment,
+
+```bash
+python -m pip install catkin_pkg colcon-common-extensions lark
+```
+
+- To backup,
+```bash
+#cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/ && \
+echo "25. 기존 파일 백업"
+mv main/hello_world_main.c main/hello_world_main.c.backup
+cp main/CMakeLists.txt main/CMakeLists.txt.backup
+
+echo "체크:"
+ls main
+
+echo "expected result: >> CMakeLists.txt  CMakeLists.txt.backup  hello_world_main.c.backup"
+```
+
+- To make micro-ROS dependency file,
+
+```bash
+#cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/ && \
+mkdir -p main && \
+echo 'dependencies:
+  micro-ros/micro_ros_espidf_component:
+    version: "^24.0.0"' > main/idf_component.yml && \
+echo '{
+    "names": {
+        "rmw_microxrcedds": {
+            "cmake-args": [
+                "-DRMW_UXRCE_TRANSPORT=custom"
+            ]
+        }
+    }
+}' > app-colcon.meta
+```
+
+- and modify `firmware/esp32/main/CMakeLists.txt`
+```
+idf_component_register(SRCS "main.cpp" # hello_world_maim.c -> main.cpp
+                       PRIV_REQUIRES spi_flash
+                       INCLUDE_DIRS "")
+```
+
+
+- and reconfigure ESP-IDF
+```bash
+idf.py reconfigure
+```
+
+
 
