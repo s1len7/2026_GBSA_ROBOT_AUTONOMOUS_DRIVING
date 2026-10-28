@@ -186,11 +186,80 @@ sudo ln -s $HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/ard
 ```
 
 - To use our development board, In Arduino IDE, 
-  - install **BOARD MANAGER > esp32**
+  - install **BOARD MANAGER > esp32** by Espressif Systems
   - and Select **WEMOS D1 R32**
 
 - To use the servo motor, 
   - install **LIBRARY MANAGER > ESP32Servo**
 
-- Processing: https://processing.org
+<!-- - Processing: https://processing.org -->
+
+
+- To install EIM
+  - Custom Installation > esp32 > [x] show old stable version > v5.5.5 > ...(proceeed with default setting)
+
+- To setup virtual environment,
+
+```bash
+mkdir -p ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts && \
+_ACTIVATE_IDF_SH_PATH="$(find ~/.espressif -type f -name 'activate_idf_v5.5.5.sh' -print -quit 2>/dev/null)" && \
+[ -n "$_ACTIVATE_IDF_SH_PATH" ] && \
+cat > ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh <<EOF
+#!/usr/bin/env bash
+env -i \\
+HOME="\$HOME" \\
+USER="\$USER" \\
+TERM="\$TERM" \\
+DISPLAY="\${DISPLAY:-}" \\
+XAUTHORITY="\${XAUTHORITY:-}" \\
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \\
+bash --noprofile --norc -c '
+    source "$_ACTIVATE_IDF_SH_PATH"
+    export PATH="\$IDF_PATH/tools:\$PATH"
+    export PATH="\$HOME/.local/bin:\$PATH"
+    exec bash --noprofile --norc
+'
+EOF
+chmod +x ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh && \
+bash -n ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh && \
+echo "완료: ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh"
+
+echo "스크립트 실행 권한 부여:"
+chmod +x ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh
+
+echo "실행 명령어 등록:"
+sudo ln -sf /usr/bin/as /usr/local/bin/as
+sudo ln -sf /usr/bin/ld /usr/local/bin/ld
+sudo ln -s ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/idfsh /usr/local/bin/idfsh
+
+source ~/.bashrc
+```
+
+- To **build** example,
+
+```bash
+echo "ESP-IDF 기본 예제 복사:"
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/
+
+
+echo "To move to the example directory,"
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32
+
+echo "컴파일 대상 칩을 ESP32로 지정 및 빌드:"
+idf.py set-target esp32
+idf.py build
+
+echo "ESP32에 펌웨어 Flash:"
+idf.py -p /dev/ttyUSB0 flash
+echo '실패하면 "BOOT 버튼 누른 상태로 flash하고, Connecting... 나오면 놓기"'
+
+echo "Serial Monitor:"
+idf.py -p /dev/ttyUSB0 monitor
+```
+
+```bash
+echo "flash와 monitor 동시에 하려면"
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
 

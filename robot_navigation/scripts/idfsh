@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+env -i \
+HOME="$HOME" \
+USER="$USER" \
+TERM="$TERM" \
+DISPLAY="${DISPLAY:-}" \
+XAUTHORITY="${XAUTHORITY:-}" \
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+bash --noprofile --norc -c ' 
+    source "/home/edu29/.espressif/tools/activate_idf_v5.5.5.sh"
+    export PATH="$IDF_PATH/tools:$PATH"
+    export PATH="$HOME/.local/bin:$PATH"
+    exec bash --noprofile --norc
+'
