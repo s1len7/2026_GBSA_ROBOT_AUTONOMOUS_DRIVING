@@ -502,7 +502,7 @@ idf.py build
 idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
-- for example, hello_world,
+- for hello_world example,
 ```bash
 idfsh
 cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
@@ -517,7 +517,7 @@ idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
 
-- for example, uart_example,
+- for uart_example,
 ```bash
 idfsh
 cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
@@ -538,7 +538,7 @@ idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
 
-- for example, wifi_example,
+- for wifi_example,
 ```bash
 idfsh
 cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
