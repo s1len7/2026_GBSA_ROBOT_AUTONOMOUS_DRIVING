@@ -487,15 +487,15 @@ ros2 pkg executables teleop_twist_keyboard
 ```
 
 
-- To create new firmware,
+- To create new firmware project,
 
 ```bash
 idfsh
 cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/
-mkdir <fw_name>
-cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<fw_name>/
+mkdir <project_name>
+cp -a "$IDF_PATH/examples/get-started/hello_world/." ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<project_name>/
 
-cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<fw_name>
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/<project_name>
 idf.py set-target esp32
 idf.py build
 
