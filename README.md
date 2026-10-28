@@ -140,7 +140,7 @@ rqt_graph
 ```bash
 colcon build
 source install/setup.bash
-ros launch <pkg_name> <pkg_name.launch.py>
+ros launch <pkg_name> <pkg_name>.launch.py
 ```
 
 for example,
@@ -155,7 +155,8 @@ BTW, We also need to know how to use our ESP32 board.
 - ESP32R Pin Map: https://makerselectronics.com/product/wemos-d1-r32-esp32-wifi-bluetooth-uno-r3-pinout/?srsltid=AYCX9vKp3jPbDMPrFh7Z9ri447VV0HaBWqJo06a4ydxUy9PhmqqONIwJ
 
 
-- in [TinkerCAD](https://www.tinkercad.com/), we can simulate our custom circuit.
+- Arduino UNO R3
+  - in [TinkerCAD](https://www.tinkercad.com/), we can simulate our custom circuit.
 
 
 - To install Arduino IDE,
@@ -188,5 +189,8 @@ sudo ln -s $HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/scripts/ard
   - install **BOARD MANAGER > esp32**
   - and Select **WEMOS D1 R32**
 
-- To use the servo motor, install **LIBRARY MANAGER > ESP32Servo**
+- To use the servo motor, 
+  - install **LIBRARY MANAGER > ESP32Servo**
+
+- Processing: https://processing.org
 
