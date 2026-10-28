@@ -317,5 +317,89 @@ idf_component_register(SRCS "main.cpp" # hello_world_maim.c -> main.cpp
 idf.py reconfigure
 ```
 
+- in `robot_navigation/firmware/esp32`,
+```bash
+idf.py menuconfig
+```
+
+- check and modify setting
+  - "micro-ROS Settings" -> 
+    - "micro-ROS middleware" -> "micro-ROS over eProsima Micro XRCE-DDS"
+    - "micro-ROS network interface select" -> "Micro XRCE-DDS over UART"
+    - "UART Settings" -> 전부 "-1"인지 확인
+- "S" 눌러 저장 -> "Esc" 눌러 종료
+
+- expected verify result
+```bash
+(venv) grep MICRO_ROS_ESP_XRCE_DDS_MIDDLEWARE sdkconfig
+>> CONFIG_MICRO_ROS_ESP_XRCE_DDS_MIDDLEWARE=y
+
+(venv) grep MICRO_ROS_ESP_UART_TRANSPORT sdkconfig
+>> CONFIG_MICRO_ROS_ESP_UART_TRANSPORT=y
+
+(venv) grep MICROROS_UART sdkconfig
+>> CONFIG_MICROROS_UART_TXD=-1
+>> CONFIG_MICROROS_UART_RXD=-1
+>> CONFIG_MICROROS_UART_RTS=-1
+>> CONFIG_MICROROS_UART_CTS=-1
+```
+
+- To build UART transport를 사용하는 micro-ROS 펌웨어
+  - in `2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32`
+
+```bash
+idf.py build
+```
+
+- expected result
+```
+...
+Successfully created esp32 image.
+Generated /home/edu29/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/build/hello_world.bin
+[15/18] cd /home/edu29/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/...9/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/build/hello_world.bin
+hello_world.bin binary size 0x3e150 bytes. Smallest app partition is 0x100000 bytes. 0xc1eb0 bytes (76%) free.
+
+Project build complete. To flash, run:
+ idf.py flash
+or
+ idf.py -p PORT flash
+or
+ python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 build/bootloader/bootloader.bin 0x8000 build/partition_table/partition-table.bin 0x10000 build/hello_world.bin
+or from the "/home/edu29/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/firmware/esp32/build" directory
+ python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash "@flash_args"
+(venv) 
+```
+
+```bash
+sudo rosdep init
+rosdep update
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/colcon_ws
+git clone -b jazzy --depth 1 \
+https://github.com/micro-ROS/micro_ros_setup.git \
+src/micro_ros_setup
+
+rosdep install \
+    --from-paths src \
+    --ignore-src \
+    -y
+
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/colcon_ws
+colcon build --symlink-install --packages-select micro_ros_setup
+source install/setup.bash
+
+ros2 run micro_ros_setup create_agent_ws.sh
+ros2 run micro_ros_setup build_agent.sh
+source install/setup.bash
+```
+
+- To start the agent,
+```bash
+ros2 run micro_ros_agent micro_ros_agent \
+    serial \
+    --dev /dev/ttyUSB0 \
+    -b 115200 \
+    -v6
+```
 
 

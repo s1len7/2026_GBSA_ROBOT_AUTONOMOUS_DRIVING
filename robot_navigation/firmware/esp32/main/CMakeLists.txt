@@ -1,3 +1,8 @@
-idf_component_register(SRCS "main.cpp"
-                       PRIV_REQUIRES spi_flash
-                       INCLUDE_DIRS "")
+idf_component_register(
+    SRCS
+        "main.cpp"
+        "esp32_serial_transport.c"
+
+    INCLUDE_DIRS
+        "."
+)
