@@ -25,22 +25,26 @@ class SimpleObstacleAvoider(Node):
 
     # LaserScan 메시지를 수신할 때 호출되는 callback 함수
     def scan_callback(self, scan: LaserScan):
-        left_vals = [r for r in scan.ranges[:31] if math.isfinite(r)]       # left_vals: 레이저 스캔의 왼쪽 30도 거리 값 중 유한한 값만 필터링
-        left_avg = sum(left_vals)/len(left_vals) if left_vals else 0.0      # left_avg: 왼쪽 거리 값의 평균 계산, 값이 없으면 0.0으로 설정
+        left_vals = [r for r in scan.ranges[:31] if math.isfinite(r)]
+        left_avg = sum(left_vals) / len(left_vals) if left_vals else 0.0
 
-        right_vals = [r for r in scan.ranges[-30:] if math.isfinite(r)]     # right_vals: 레이저 스캔의 오른쪽 30도 거리 값 중 유한한 값만 필터링
-        right_avg = sum(right_vals)/len(right_vals) if right_vals else 0.0  # right_avg: 오른쪽 거리 값의 평균 계산, 값이 없으면 0.0으로 설정
+        right_vals = [r for r in scan.ranges[-30:] if math.isfinite(r)]
+        right_avg = sum(right_vals) / len(right_vals) if right_vals else 0.0
 
-        front_vals = left_vals + right_vals                                 # front_vals: 왼쪽과 오른쪽 거리 값의 합
-        front_min = min(front_vals) if front_vals else float('inf')         # front_min: 정면 거리 값의 최솟값 계산, 값이 없으면 무한대로 설정
+        front_vals = left_vals + right_vals
+        front_min = min(front_vals) if front_vals else float('inf')
 
-        twist = TwistStamped()  # TwistStamped 메시지 객체 생성
+        twist = TwistStamped()
 
-        twist.twist.linear.x = self.linear_speed    # 전진 속도를 설정
-        twist.twist.angular.z = self.angular_speed  # 회전 속도를 설정
-        
-        self.cmd_pub.publish(twist)  # TwistStamped 메시지를 /cmd_vel 토픽에 publish하여 로봇을 제어
+        if front_min > self.front_threshold:
+            twist.twist.linear.x = self.linear_speed
+        else:
+            if left_avg > right_avg:
+                twist.twist.angular.z = self.angular_speed
+            else:
+                twist.twist.angular.z = -self.angular_speed
 
+        self.cmd_pub.publish(twist)
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------

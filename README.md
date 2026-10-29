@@ -561,3 +561,27 @@ idf.py -p /dev/ttyUSB0 flash monitor
 
 
 
+```bash
+# execute in each terminal
+
+ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage2.launch.py 
+rviz
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+```bash
+ros2 pkg create B_lidar --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs nav_msgs
+
+echo "TODO: implement colcon_ws/src/B_lidar/B_lidar/simple_oa.py"
+read -r -p "Press any key to continue..."
+```
+
+- To run `B_lidar` (in a shell, from `colcon_ws/`):
+```bash
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/colcon_ws
+source install/setup.bash
+# simple obstacle avoidance
+ros2 run B_lidar simple_oa
+# or yaw-based obstacle avoidance
+ros2 run B_lidar simple_yaw_oa
+```
