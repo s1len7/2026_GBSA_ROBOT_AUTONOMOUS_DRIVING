@@ -3,7 +3,7 @@ from launch.actions import ExecuteProcess, RegisterEventHandler
 from launch.event_handlers import OnProcessStart
 
 workspace_path = '~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING'
-pkg_name = 'A_pubsub'
+pkg_name = 'A_talk_listener'
 
 def generate_launch_description():
 

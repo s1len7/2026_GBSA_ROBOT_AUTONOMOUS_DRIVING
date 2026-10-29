@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'tutorial_robot_control'
+package_name = 'A_talk_listener'
 
 setup(
     name=package_name,
@@ -10,6 +10,11 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+
+        # To use <pkg_name>.launch.py
+        ('share/' + package_name + '/launch',
+            ['launch/A_talk_listener.launch.py']),
+
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,9 +30,8 @@ setup(
     entry_points={
         'console_scripts': [
             # identifier = package_name.module_name:function_name
-            "publisher = A_pubsub.publisher:main",
-            "processor = A_pubsub.processor:main",
-            "subscriber = A_pubsub.subscriber:main",
+            "talker = A_talk_listener.talker:main",
+            "listener = A_talk_listener.listener:main",
         ],
     },
 )

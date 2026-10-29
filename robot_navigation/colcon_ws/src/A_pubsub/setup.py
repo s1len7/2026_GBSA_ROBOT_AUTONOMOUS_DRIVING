@@ -10,11 +10,6 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-
-        # To use <pkg_name>.launch.py
-        ('share/' + package_name + '/launch',
-            ['launch/A_pubsub.launch.py']),
-
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -30,8 +25,9 @@ setup(
     entry_points={
         'console_scripts': [
             # identifier = package_name.module_name:function_name
-            "talker = A_pubsub.talker:main",
-            "listener = A_pubsub.listener:main",
+            "publisher = A_pubsub.publisher:main",
+            "processor = A_pubsub.processor:main",
+            "subscriber = A_pubsub.subscriber:main",
         ],
     },
 )
