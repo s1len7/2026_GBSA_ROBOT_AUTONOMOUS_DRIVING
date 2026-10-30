@@ -565,7 +565,7 @@ idf.py -p /dev/ttyUSB0 flash monitor
 # execute in each terminal
 
 ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage2.launch.py 
-rviz
+rviz2
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
 
@@ -585,3 +585,59 @@ ros2 run B_lidar simple_oa
 # or yaw-based obstacle avoidance
 ros2 run B_lidar simple_yaw_oa
 ```
+
+
+- To run `C_transform` (in a shell, from `colcon_ws/`):
+```bash
+cd ~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/colcon_ws
+source install/setup.bash
+
+export ROS_DOMAIN_ID=99
+ros2 run C_transform tf_listener_laser
+rviz2 
+```
+
+```bash
+# execute in each terminal
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
+rviz2
+ros2 run C_transform lidar_mapper
+ros2 run B_lidar corner_escape_oa
+```
+
+```bash
+# execute in each terminal
+ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage3.launch.py 
+rviz2
+ros2 topic echo /odom
+ros2 launch slam_toolbox online_async_launch.py
+ros2 run B_lidar corner_escape_oa
+# TODO: add ros2 echo? /odom
+```
+
+```bash
+# execute in each terminal
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
+rviz2
+# Add RobotModel, LaserScen, TF, Map
+ros2 launch slam_toolbox online_async_launch.py
+ros2 run B_lidar corner_escape_oa
+
+ros2 run nav2_map_server map_saver_cli -f $HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/map
+ros2 launch nav2_bringup bringup_launch.py map:=$HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/map/map.yaml use_sim_time:=true
+ros2 run B_lidar corner_escape_oa
+# TODO: add ros2 echo? /odom
+```
+
+<!-- ros2 launch nav2_bringup bringup_launch.py map:=~/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/map/map.yaml use_sim_time:=true -->
+ros2 launch nav2_bringup bringup_launch.py map:=$HOME/2026_GBSA_ROBOT_AUTONOMOUS_DRIVING/robot_navigation/map/map.yaml use_sim_time:=true
+ros2 topic echo /map
+
+
+
+<!-- 
+```bash
+sudo apt update
+sudo apt install nvidia-driver-595-open
+```
+ -->
