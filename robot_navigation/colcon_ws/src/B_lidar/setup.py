@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
             'simple_oa = B_lidar.simple_oa:main',
             'simple_yaw_oa = B_lidar.simple_yaw_oa:main',
+            'simple_oa_example = B_lidar.simple_oa_example:main',
+            'corner_escape_oa = B_lidar.corner_escape_oa:main',
         ],
     },
 )
